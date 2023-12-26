@@ -6,7 +6,7 @@ const SignUp = () => {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -19,26 +19,33 @@ const SignUp = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await fetch("/api/user/signup", {
-        method: "POST",
+      const response = await axios.post("/api/user/signup", formData, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
       });
-      const data = await res.json();
-      if (data.success === false) {
-        setError(data.error);
-        setLoading(false);
-        return;
-      }
-      console.log(data);
+
+      //The below code is redundant because when the error occures in response it goes to the
+      //catch block and we cannot access the response.data or anything related to it
+
+      // const data = response.data;
+      // console.log(data);
+      // if (data.success === false) {
+      //   console.log("Data is", data);
+      //   console.log("Error  isasdfasf", data.error);
+      //   setError(data.error);
+      //   setLoading(false);
+      //   return;
+      // }
+
       setLoading(false);
-      setError(null)
-      navigate('/sign-in')
+      setError(null);
+      navigate("/sign-in");
     } catch (err) {
-      setLoading(false)
-      setError(err.message)
+      setLoading(false);
+      // setError(err.message);
+      setError(err.response.data.error); // --> this is the correct way to access the error in response
+      console.log(err)
     }
   };
 
@@ -80,9 +87,39 @@ const SignUp = () => {
           <span className="text-blue-700">Sign in</span>
         </Link>
       </div>
+      
       {error && <p className="text-red-400 mt-5">{error}</p>}
     </div>
   );
 };
 
 export default SignUp;
+
+
+
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   try {
+//     setLoading(true);
+//     const res = await fetch("/api/user/signup", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify(formData),
+//     });
+//     const data = await res.json();
+//     if (data.success === false) {
+//       setError(data.error);
+//       setLoading(false);
+//       return;
+//     }
+//     console.log(data);
+//     setLoading(false);
+//     setError(null)
+//     navigate('/sign-in')
+//   } catch (err) {
+//     setLoading(false)
+//     setError(err.message)
+//   }
+// };
