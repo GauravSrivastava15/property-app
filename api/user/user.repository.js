@@ -6,7 +6,8 @@ const UserModel = mongoose.model("User", userSchema)
 export const userSigninRepo = async(userData) =>{
     try{
         const {username, email, password} = userData
-        const newUser = new UserModel({username,email,password})
+        console.log(username)
+        const newUser = new UserModel({username, email, password})
         await newUser.save()
         return {success: true, res: newUser}
     }catch(err){

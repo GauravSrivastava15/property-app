@@ -23,7 +23,7 @@ const Header = () => {
         <ul className="flex gap-4">
           <Link to="/">
             <li className="hidden sm:inline text-slate-700 hover:underline">
-              Home is here 
+              Home
             </li>
           </Link>
           <Link to="/about">
@@ -31,7 +31,7 @@ const Header = () => {
               About
             </li>
           </Link>
-          <Link to="/sing-in">
+          <Link to="/sign-in">
             <li className=" text-slate-700 hover:underline">Sign in</li>
           </Link>
         </ul>
