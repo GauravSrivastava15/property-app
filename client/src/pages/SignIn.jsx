@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { signInStart, signInSuccess, signInFailure } from "../redux/user/userSlice";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const {loading, error} = useSelector((state) => state.user)
   const navigate = useNavigate();
+  const dispatch = useDispatch()
 
   const handleChange = (e) => {
     setFormData({
@@ -18,7 +20,7 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
+      dispatch(signInStart())
       const response = await axios.post("/api/user/signin", formData, {
         headers: {
           "Content-Type": "application/json",
@@ -38,13 +40,15 @@ const SignIn = () => {
       //   return;
       // }
 
-      setLoading(false);
-      setError(null);
+      // setLoading(false);
+      // setError(null);
+      console.log(response.data)
+      dispatch(signInSuccess(response.data))
       navigate("/");
     } catch (err) {
-      setLoading(false);
-      // setError(err.message);
-      setError(err.response.data.error); // --> this is the correct way to access the error in response
+      // setLoading(false);
+      // setError(err.response.data.error); // --> this is the correct way to access the error in axios response
+      dispatch(signInFailure(err.response.data.error))
       console.log(err)
     }
   };
