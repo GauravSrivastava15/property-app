@@ -7,9 +7,9 @@ const UserModel = mongoose.model("User", userSchema);
 //Sign up Repo
 export const userSigninRepo = async (userData) => {
   try {
-    const { username, email, password } = userData;
+    const { username, email, password, avatar } = userData;
     // console.log(username);
-    const newUser = new UserModel({ username, email, password });
+    const newUser = new UserModel({ username, email, password, avatar });
     await newUser.save();
     return { success: true, res: newUser };
   } catch (err) {
@@ -41,3 +41,9 @@ export const userLoginRepo = async (userData) => {
     return { success: false, error: { statusCode: 500, msg: err } };
   }
 };
+
+export const googleRepo = async (userData) =>{
+    const { email, password } = userData;
+    const user = await UserModel.findOne({email})
+    return user
+}
