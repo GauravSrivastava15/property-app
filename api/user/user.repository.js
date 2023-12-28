@@ -42,6 +42,7 @@ export const userLoginRepo = async (userData) => {
   }
 };
 
+//it checks wheteher the user is already present in the data base or not
 export const googleRepo = async (userData) =>{
     const { email, password } = userData;
     const user = await UserModel.findOne({email})
