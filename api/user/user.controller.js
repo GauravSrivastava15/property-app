@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import {
   googleRepo,
+  updateUserRepo,
   userLoginRepo,
   userSigninRepo,
 } from "./user.repository.js";
@@ -28,16 +29,16 @@ export const signin = async (req, res, next) => {
     res
       .cookie("jwtToken", token, { maxAge: 1 * 60 * 60 * 1000, httpOnly: true })
       .status(200)
-      .json({ success: true, msg: "user login successful", token }); //we can also send rest
+      .json({ success: true, msg: "user login successful", rest }); //we can also send rest
   } else {
     next(new customErrorHandler(resp.error.statusCode, resp.error.msg));
   }
 };
 
-export const google = async (req, res) => {
+export const google = async (req, res, next) => {
   try {
     const user = await googleRepo(req.body);
-    console.log(user);
+    // console.log(user);
     if (user) {
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
       const { password: pass, ...rest } = user._doc;
@@ -78,3 +79,17 @@ export const google = async (req, res) => {
     next(new customErrorHandler(500, "Google varification failed"));
   }
 };
+
+export const updateUser = async (req, res, next) =>{
+  if(req.user !== req.params.id){
+    return next(new customErrorHandler(401, "You can only update your account!"))
+  }else{
+    const resp = await updateUserRepo(req.params.id, req.body, next)
+    if(resp.success){
+      const {password, ...rest} = resp.res._doc;
+      res.status(200).json(rest)
+    }else{
+      next(new customErrorHandler(resp.error.statusCode, resp.error.msg));
+    }
+  }
+}

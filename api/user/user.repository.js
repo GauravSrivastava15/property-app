@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { userSchema } from "./user.schema.js";
-import { compareHashPassword } from "../utils/hashPassword.js";
+import { compareHashPassword, hashPassword } from "../utils/hashPassword.js";
 
 const UserModel = mongoose.model("User", userSchema);
 
@@ -28,13 +28,19 @@ export const userLoginRepo = async (userData) => {
         success: false,
         error: { statusCode: 404, msg: "user not found" },
       };
-    }else{
-        let passwordValidation = await compareHashPassword(password, user.password)
-        if(passwordValidation){
-            return {success: true, res: user}
-        }else{
-            return {success:false, error:{statusCode: 404, msg: "invalid credentials"}}
-        }
+    } else {
+      let passwordValidation = await compareHashPassword(
+        password,
+        user.password
+      );
+      if (passwordValidation) {
+        return { success: true, res: user };
+      } else {
+        return {
+          success: false,
+          error: { statusCode: 404, msg: "invalid credentials" },
+        };
+      }
     }
   } catch (err) {
     // console.log("error in user signin " + err);
@@ -43,8 +49,33 @@ export const userLoginRepo = async (userData) => {
 };
 
 //it checks wheteher the user is already present in the data base or not
-export const googleRepo = async (userData) =>{
-    const { email, password } = userData;
-    const user = await UserModel.findOne({email})
-    return user
-}
+export const googleRepo = async (userData) => {
+  const { email, password } = userData;
+  const user = await UserModel.findOne({ email });
+  return user;
+};
+
+export const updateUserRepo = async (id, userData, next) => {
+  try {
+    if (userData.password) {
+      const newHashedPassword = await hashPassword(userData.password, next);
+      userData.password = newHashedPassword;
+    }
+    const updateUser = await UserModel.findByIdAndUpdate(
+      id,
+      {
+        $set: {
+          username: userData.username,
+          email: userData.emai,
+          password: userData.password,
+          avatar: userData.avatar,
+        },
+      },
+      { new: true }
+    );
+    
+    return { success: true, res: updateUser };
+  } catch (err) {
+    return { success: false, error: { statusCode: 500, msg: err } };
+  }
+};
