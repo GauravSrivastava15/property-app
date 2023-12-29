@@ -5,6 +5,7 @@ import {
   signin,
   signup,
   updateUser,
+  userSignOut,
 } from "./user.controller.js";
 import { auth } from "../middlewares/jwtAuth.js";
 
@@ -15,5 +16,5 @@ router.post("/signin", signin);
 router.post("/google", google);
 router.post("/update/:id", auth, updateUser);
 router.delete("/delete/:id", auth, deleteUser);
-
+router.get('/signout', userSignOut)
 export default router;
