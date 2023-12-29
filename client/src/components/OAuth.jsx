@@ -30,8 +30,8 @@ const OAuth = () => {
           },
         }
       );
-      console.log("Response", response);
-      dispatch(signInSuccess(response.data));
+      // console.log("Response", response.data.rest);
+      dispatch(signInSuccess(response.data.rest));
       navigate("/");
 
       // const res = await fetch('/api/user/google', {

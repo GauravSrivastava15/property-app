@@ -43,7 +43,7 @@ const SignIn = () => {
 
       // setLoading(false);
       // setError(null);
-      console.log(response.data)
+      // console.log("From sign In page",response.data)
       dispatch(signInSuccess(response.data))
       navigate("/");
     } catch (err) {
