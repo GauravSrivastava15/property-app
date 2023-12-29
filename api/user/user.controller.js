@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import {
+  deleteUserRepo,
   googleRepo,
   updateUserRepo,
   userLoginRepo,
@@ -80,16 +81,34 @@ export const google = async (req, res, next) => {
   }
 };
 
-export const updateUser = async (req, res, next) =>{
-  if(req.user !== req.params.id){
-    return next(new customErrorHandler(401, "You can only update your account!"))
-  }else{
-    const resp = await updateUserRepo(req.params.id, req.body, next)
-    if(resp.success){
-      const {password, ...rest} = resp.res._doc;
-      res.status(200).json(rest)
-    }else{
+export const updateUser = async (req, res, next) => {
+  if (req.user !== req.params.id) {
+    return next(
+      new customErrorHandler(401, "You can only update your account!")
+    );
+  } else {
+    const resp = await updateUserRepo(req.params.id, req.body, next);
+    if (resp.success) {
+      const { password, ...rest } = resp.res._doc;
+      res.status(200).json(rest);
+    } else {
       next(new customErrorHandler(resp.error.statusCode, resp.error.msg));
     }
   }
-}
+};
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user !== req.params.id) {
+    return next(
+      new customErrorHandler(401, "You can only delete your account!")
+    );
+  } else {
+    const resp = await deleteUserRepo(req.params.id);
+    if (resp.success) {
+      res.clearCookie('jwtToken')
+      res.status(200).json("User delete")
+    } else {
+      next(new customErrorHandler(400, resp.error));
+    }
+  }
+};

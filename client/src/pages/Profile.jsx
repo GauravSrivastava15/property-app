@@ -8,7 +8,14 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
-import { updateUserStart, updateUserSuccess, updateUserFailure } from "../redux/user/userSlice";
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+} from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 
@@ -19,8 +26,8 @@ const Profile = () => {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const { currentUser, loading, error } = useSelector((state) => state.user);
-  const dispatch = useDispatch()
-  const [updateSuccess, setUpdateSuccess] = useState(false)
+  const dispatch = useDispatch();
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   // console.log(formData);
   // console.log(filePerc);
@@ -59,22 +66,25 @@ const Profile = () => {
     );
   };
 
-  const handleChange = (e) =>{
-    setFormData({...formData, [e.target.id]: e.target.value})
-  }
-  
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
 
-  const handleSubmit = async (e) =>{
-    e.preventDefault()
-    try{
-      dispatch(updateUserStart())
-      const res = await axios.post(`/api/user/update/${currentUser._id}`, formData,{
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await axios.post(
+        `/api/user/update/${currentUser._id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       // console.log("Axios response",res.data)
-      const data = res.data
+      const data = res.data;
 
       // using fetch :point_down:
       // const res = await fetch (`/api/user/update/${currentUser._id}`,{
@@ -87,19 +97,29 @@ const Profile = () => {
       // const data = await res.json()
 
       // this if condition is redundant
-      if(data.success === false){
-        
-        dispatch(updateUserFailure(data.message))
-        return
+      if (data.success === false) {
+        dispatch(updateUserFailure(data.message));
+        return;
       }
-      dispatch(updateUserSuccess(data))
-      setUpdateSuccess(true)
-    }catch(err){
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (err) {
       // console.log("err is" , err)
-      dispatch(updateUserFailure(err.response.data))
+      dispatch(updateUserFailure(err.response.data));
     }
-  }
+  };
 
+  const handleDelete = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await axios.delete(`/api/user/delete/${currentUser._id}`);
+      // console.log("Delete response", res);
+      dispatch(deleteUserSuccess(res.data));
+    } catch (err) {
+      // console.log("Err in delete" + err);
+      dispatch(deleteUserFailure(err));
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -117,14 +137,19 @@ const Profile = () => {
           src={formData.avatar || currentUser.avatar}
           alt="User Avatar"
           className="rounded-full h-24 w-24 object-cover cursor-pointer border border-black self-center mt-2"
-          
         />
         <p className="text-sm self-center">
-          {fileUploadError ?
-           <span className="text-red-700">Error Image upload (image must be less than 2 mb)</span> : filePerc > 0 && filePerc < 100 ? 
-            (<span className="text-slate-700">{`Uploading ${filePerc}%`}</span>) : filePerc === 100 ? 
-            (<span className="text-green-700">Image successfully uploaded!</span>) : ("")
-          }
+          {fileUploadError ? (
+            <span className="text-red-700">
+              Error Image upload (image must be less than 2 mb)
+            </span>
+          ) : filePerc > 0 && filePerc < 100 ? (
+            <span className="text-slate-700">{`Uploading ${filePerc}%`}</span>
+          ) : filePerc === 100 ? (
+            <span className="text-green-700">Image successfully uploaded!</span>
+          ) : (
+            ""
+          )}
         </p>
         <input
           type="text"
@@ -149,17 +174,26 @@ const Profile = () => {
           id="password"
           onChange={handleChange}
         />
-        <button disabled={loading} className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">
-          {loading ? 'Loading...' : 'Update'}
+        <button
+          disabled={loading}
+          className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80"
+        >
+          {loading ? "Loading..." : "Update"}
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span onClick={handleDelete} className="text-red-700 cursor-pointer">
+          Delete account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
-      
-      <p className="text-red-700 mt-5">{error && error.error ? error.error : error}</p>
-      <p className="text-green-700 mt-5">{updateSuccess ? 'User is updated successfully': " "}</p>
+
+      <p className="text-red-700 mt-5">
+        {error && error.error ? error.error : error}
+      </p>
+      <p className="text-green-700 mt-5">
+        {updateSuccess ? "User is updated successfully" : " "}
+      </p>
     </div>
   );
 };

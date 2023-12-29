@@ -73,9 +73,18 @@ export const updateUserRepo = async (id, userData, next) => {
       },
       { new: true }
     );
-    
+
     return { success: true, res: updateUser };
   } catch (err) {
     return { success: false, error: { statusCode: 500, msg: err } };
+  }
+};
+
+export const deleteUserRepo = async (id) => {
+  try {
+    await UserModel.findByIdAndDelete(id);
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: err };
   }
 };
