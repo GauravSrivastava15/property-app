@@ -96,7 +96,7 @@ const Profile = () => {
       setUpdateSuccess(true)
     }catch(err){
       // console.log("err is" , err)
-      dispatch(updateUserFailure(err.response.data.error))
+      dispatch(updateUserFailure(err.response.data))
     }
   }
 
@@ -158,7 +158,7 @@ const Profile = () => {
         <span className="text-red-700 cursor-pointer">Sign out</span>
       </div>
       
-      <p className="text-red-700 mt-5">{error ? error: ''}</p>
+      <p className="text-red-700 mt-5">{error && error.error ? error.error : error}</p>
       <p className="text-green-700 mt-5">{updateSuccess ? 'User is updated successfully': " "}</p>
     </div>
   );
