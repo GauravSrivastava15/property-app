@@ -76,6 +76,7 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // console.log("customer id in handle submit",currentUser)
       dispatch(updateUserStart());
       const res = await axios.post(
         `/api/user/update/${currentUser._id}`,
@@ -107,7 +108,7 @@ const Profile = () => {
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
     } catch (err) {
-      // console.log("err is" , err)
+      console.log("err in update" , err)
       dispatch(updateUserFailure(err.response.data));
     }
   };
@@ -115,11 +116,12 @@ const Profile = () => {
   const handleDelete = async () => {
     try {
       dispatch(deleteUserStart());
+      // console.log("customer id in handle delete",currentUser._id)
       const res = await axios.delete(`/api/user/delete/${currentUser._id}`);
-      // console.log("Delete response", res);
+      console.log("Delete response", res);
       dispatch(deleteUserSuccess(res.data));
     } catch (err) {
-      // console.log("Err in delete" + err);
+      console.log("Err in delete user" + err);
       dispatch(deleteUserFailure(err));
     }
   };
