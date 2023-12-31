@@ -21,6 +21,7 @@ import {
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -118,7 +119,7 @@ const Profile = () => {
       dispatch(deleteUserStart());
       // console.log("customer id in handle delete",currentUser._id)
       const res = await axios.delete(`/api/user/delete/${currentUser._id}`);
-      console.log("Delete response", res);
+      // console.log("Delete response", res);
       dispatch(deleteUserSuccess(res.data));
     } catch (err) {
       console.log("Err in delete user" + err);
@@ -195,6 +196,7 @@ const Profile = () => {
         >
           {loading ? "Loading..." : "Update"}
         </button>
+        <Link className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95" to={"/create-listing"}>Create Listing</Link>
       </form>
       <div className="flex justify-between mt-5">
         <span onClick={handleDelete} className="text-red-700 cursor-pointer">
