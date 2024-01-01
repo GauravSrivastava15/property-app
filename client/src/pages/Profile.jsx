@@ -32,6 +32,8 @@ const Profile = () => {
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const dispatch = useDispatch();
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [showListingsError, setShowListingsError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
 
   // console.log(formData);
   // console.log(filePerc);
@@ -109,7 +111,7 @@ const Profile = () => {
       dispatch(updateUserSuccess(data));
       setUpdateSuccess(true);
     } catch (err) {
-      console.log("err in update" , err)
+      console.log("err in update", err);
       dispatch(updateUserFailure(err.response.data));
     }
   };
@@ -127,15 +129,27 @@ const Profile = () => {
     }
   };
 
-  const handleSignOut = async () =>{
-    try{
-      dispatch(signOutUserStart())
-      const res = await axios.get('/api/user/signout')
-      dispatch(signOutUserSuccess(res.data))
-    }catch(err){
-      dispatch(signOutUserFailure(err))
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await axios.get("/api/user/signout");
+      dispatch(signOutUserSuccess(res.data));
+    } catch (err) {
+      dispatch(signOutUserFailure(err));
     }
-  }
+  };
+
+  const handleShowListings = async () => {
+    try {
+      setShowListingsError(false);
+      const res = await axios.get(`/api/user/listings/${currentUser._id}`);
+      console.log(res);
+      const data = res.data;
+      setUserListings(data);
+    } catch (error) {
+      setShowListingsError(true);
+    }
+  };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -196,13 +210,20 @@ const Profile = () => {
         >
           {loading ? "Loading..." : "Update"}
         </button>
-        <Link className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95" to={"/create-listing"}>Create Listing</Link>
+        <Link
+          className="bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95"
+          to={"/create-listing"}
+        >
+          Create Listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span onClick={handleDelete} className="text-red-700 cursor-pointer">
           Delete account
         </span>
-        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign out</span>
+        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">
+          Sign out
+        </span>
       </div>
 
       <p className="text-red-700 mt-5">
@@ -211,6 +232,42 @@ const Profile = () => {
       <p className="text-green-700 mt-5">
         {updateSuccess ? "User is updated successfully" : " "}
       </p>
+      <button onClick={handleShowListings} className="text-green-700 w-full">
+        Show Listings
+      </button>
+      <p className="text-red-700 mt-5">
+        {showListingsError ? "Error showing listings" : ""}
+      </p>
+      {userListings && userListings.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <h1 className="text-center mt-7 text-2xl font-semibold">Your Listings</h1>
+          {userListings.map((listing) =>
+          <div
+            key={listing._id}
+            className="border rounded-lg p-3 flex justify-between items-center gap-4"
+          >
+            <Link to={`/listing/${listing._id}`}>
+              <img
+                src={listing.imageUrls[0]}
+                alt="listing cover"
+                className="h-16 w-16 object-contain"
+              />
+            </Link>
+
+            <Link
+              className="text-slate-700 font-semibold flex-1 hover:underline truncate"
+              to={`/listing/${listing._id}`}
+            >
+              <p>{listing.name}</p>
+            </Link>
+            <div className="flex flex-col items-center">
+              <button className="text-red-700 uppercase">Delete</button>
+              <button className="text-green-700 uppercase">Edit</button>
+            </div>
+          </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
