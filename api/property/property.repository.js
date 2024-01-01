@@ -50,8 +50,10 @@ export const updatePropertyRepo = async (user_id, property_id, data) => {
     //     success: false,
     //     error: { statusCode: 405, msg: "Property not found" },
     //   };
-    const listing = await PropertyModel.findById(property_id);
-    console.log("listing is" + listing);
+    const listing = await PropertyModel.findById(property_id);  
+    // if we provide the wrong property id it does show the Property not found error but instead it gives the
+    // CastError: Cast to ObjectId failed it can be resolved by adding _id: String in the property Schema
+
     if (!listing) {
       return {
         success: false,

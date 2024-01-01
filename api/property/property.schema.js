@@ -54,6 +54,7 @@ export const propertySchema = new Schema(
       type: String,
       required: true,
     },
+    // _id:String,
   },
   { timestamps: true }
 );
