@@ -1,11 +1,20 @@
 import express from "express";
-import { createPropertyRepo } from "./property.repository.js";
+import { createPropertyRepo, deletePropertyRepo } from "./property.repository.js";
 import { customErrorHandler } from "../middlewares/errorHandler.js";
 
 export const createProperty = async (req, res, next) =>{
     const resp = await createPropertyRepo(req.body)
     if(resp.success){
         res.status(200).json({success: true, res: resp.res})
+    }else{
+        next(new customErrorHandler(resp.error.statusCode, resp.error.msg))
+    }
+}
+
+export const deleteProperty = async (req, res, next) =>{
+    const resp = await deletePropertyRepo(req.user, req.params.id)
+    if(resp.success){
+        res.status(200).json("property deleted")
     }else{
         next(new customErrorHandler(resp.error.statusCode, resp.error.msg))
     }

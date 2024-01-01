@@ -33,7 +33,7 @@ const CreateListing = () => {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  console.log("Form Data is ", formData);
+  // console.log("Form Data is ", formData);
 
   const handleImageSubmit = (e) => {
     if (files.length > 0 && files.length + formData.imageUrls.length < 7) {
@@ -122,7 +122,7 @@ const CreateListing = () => {
       });
     }
   };
-  console.log("Customer ID is", currentUser._id);
+  // console.log("Customer ID is", currentUser._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -136,9 +136,9 @@ const CreateListing = () => {
         ...formData,
         userRef: currentUser._id,
       });
-      console.log("res form property api", res);
+      // console.log("res form property api", res);
       const data = res.data.res; //res.data gives success and res. in res we have the response
-      console.log("data is ", data);
+      // console.log("data is ", data);
       setLoading(false);
       navigate(`/listing/${data._id}`)
     } catch (err) {
