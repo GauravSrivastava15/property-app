@@ -1,6 +1,7 @@
 import exprees from "express";
 import {
   deleteUser,
+  getUserListings,
   google,
   signin,
   signup,
@@ -16,5 +17,7 @@ router.post("/signin", signin);
 router.post("/google", google);
 router.post("/update/:id", auth, updateUser);
 router.delete("/delete/:id", auth, deleteUser);
+router.get('/listings/:id', auth, getUserListings )
 router.get('/signout', userSignOut)
+
 export default router;

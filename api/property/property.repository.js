@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { propertySchema } from "./property.schema.js";
 
-const PropertyModel = mongoose.model("Property", propertySchema)
+export const PropertyModel = mongoose.model("Property", propertySchema)
 
 export const createPropertyRepo = async (data) =>{
     try{

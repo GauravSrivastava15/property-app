@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { userSchema } from "./user.schema.js";
 import { compareHashPassword, hashPassword } from "../utils/hashPassword.js";
+import { PropertyModel } from "../property/property.repository.js";
 
 const UserModel = mongoose.model("User", userSchema);
 
@@ -88,3 +89,12 @@ export const deleteUserRepo = async (id) => {
     return { success: false, error: err };
   }
 };
+
+export const listingRepo = async (listData, params_id) =>{
+  try{
+    const listings = await PropertyModel.find({userRef: params_id})
+    return {success: true, res: listings}
+  }catch(err){
+    return {success: false, error: err}
+  }
+}
