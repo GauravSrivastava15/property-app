@@ -83,6 +83,18 @@ export const updatePropertyRepo = async (user_id, property_id, data) => {
       };
     }
     console.log(err);
-    return { success: false, error: { statusCode: 400, msg: err.message } };
+    return { success: false, error: { statusCode: 400, msg: err } };
   }
 };
+
+export const getListingRepo = async (property_id) =>{
+  try{
+    const listing = await PropertyModel.findById(property_id)
+    if(!listing){
+      return {success: false, error: {statusCode: 404, msg: 'Listing not found'}}
+    }
+    return {success: true, res: listing}
+  }catch(err){
+    return { success: false, error: { statusCode: 400, msg: err } };
+  }
+}

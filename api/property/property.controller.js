@@ -1,5 +1,5 @@
 import express from "express";
-import { createPropertyRepo, deletePropertyRepo, updatePropertyRepo } from "./property.repository.js";
+import { createPropertyRepo, deletePropertyRepo, getListingRepo, updatePropertyRepo } from "./property.repository.js";
 import { customErrorHandler } from "../middlewares/errorHandler.js";
 
 export const createProperty = async (req, res, next) =>{
@@ -28,5 +28,15 @@ export const updateProperty = async (req, res, next) =>{
     }else{
         console.log(resp.error.statusCode)
         next(new customErrorHandler(resp.error.statusCode, resp.error.msg))
+    }
+}
+
+export const getListing = async(req, res, next) =>{
+    const resp = await getListingRepo(req.params.id)
+    
+    if(resp.success){
+        res.status(200).json(resp.res)
+    }else{
+        next (new customErrorHandler(resp.error.statusCode, resp.error.msg))
     }
 }

@@ -144,7 +144,7 @@ const Profile = () => {
     try {
       setShowListingsError(false);
       const res = await axios.get(`/api/user/listings/${currentUser._id}`);
-      console.log(res);
+      // console.log(res);
       const data = res.data;
       setUserListings(data);
     } catch (error) {
@@ -285,9 +285,13 @@ const Profile = () => {
                   Delete
                 </button>
                 <p className="text-red-700 mt-5">
-                  {showListingsDelteError ? "Error while deleting the property" : ""}
+                  {showListingsDelteError
+                    ? "Error while deleting the property"
+                    : ""}
                 </p>
-                <button className="text-green-700 uppercase">Edit</button>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className="text-green-700 uppercase">Edit</button>
+                </Link>
               </div>
             </div>
           ))}
