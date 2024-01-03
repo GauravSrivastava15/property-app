@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import {
   deleteUserRepo,
+  getUserRepo,
   googleRepo,
   listingRepo,
   updateUserRepo,
@@ -135,5 +136,16 @@ export const getUserListings = async (req, res, next) =>{
     }else{
       next( new customErrorHandler(400, resp.error))
     }
+  }
+}
+
+export const getUser = async (req, res, next) =>{
+  const resp = await getUserRepo(req.params.id)
+  
+  if(resp.success){
+    const { password: pass, ...rest } = resp.res._doc;
+    res.status(200).json(rest)
+  }else{
+    next(new customErrorHandler(400, resp.error))
   }
 }

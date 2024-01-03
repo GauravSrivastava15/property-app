@@ -98,3 +98,16 @@ export const listingRepo = async (listData, params_id) =>{
     return {success: false, error: err}
   }
 }
+
+export const getUserRepo = async (id) =>{
+  try{
+    const user = await UserModel.findById(id)
+    if(user){
+      return {success: true, res: user}
+    }else{
+      return {success: false, error: 'User not found'}
+    }
+  }catch(err){
+    return {success: false, error: err}
+  }
+}
