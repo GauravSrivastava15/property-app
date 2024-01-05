@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import ListingItem from "../components/ListingItem";
 
 const Search = () => {
   const [sidebardata, setSidebardata] = useState({
@@ -15,7 +16,7 @@ const Search = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false)
   const [listing, setListing] = useState([])
-//   console.log("Listing ", listing)
+  console.log("Listing ", listing)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -26,6 +27,8 @@ const Search = () => {
     const offerFromUrl = urlParams.get("offer");
     const sortFromUrl = urlParams.get("sort");
     const orderFromUrl = urlParams.get("order");
+
+    
 
     if (
       searchTermFromUrl ||
@@ -65,9 +68,10 @@ const Search = () => {
   const handleChange = (e) => {
     if (
       e.target.id === "all" ||
-      e.target.value === "rent" ||
-      e.target.value === "sale"
+      e.target.id === "rent" ||
+      e.target.id === "sale"
     ) {
+    
       setSidebardata({ ...sidebardata, type: e.target.id });
     }
 
@@ -214,10 +218,21 @@ const Search = () => {
         </form>
       </div>
 
-      <div className="">
+      <div className="flex-1">
         <h1 className="text-3xl font-semibold p-3 border-b text-slate-700 mt-5">
           Listing Results:
         </h1>
+        <div className="p-7 flex flex-wrap gap-4">
+            {!loading && listing.length === 0 && (
+                <p className="text-xl text-slate-700">No Listing Found</p>
+            )}
+            {loading && (
+                <p className="text-xl text-slate-700 text-center w-full">Loading...</p>
+            )}
+            {!loading && listing && listing.map((listing) =>(
+                <ListingItem key={listing._id} listing={listing}/>
+            ))}
+        </div>
       </div>
     </div>
   );
