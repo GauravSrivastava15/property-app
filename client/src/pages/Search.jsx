@@ -14,9 +14,11 @@ const Search = () => {
     order: "desc",
   });
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false)
-  const [listing, setListing] = useState([])
-  console.log("Listing ", listing)
+  const [loading, setLoading] = useState(false);
+  const [listing, setListing] = useState([]);
+  const [showMore, setShowMore] = useState(false);
+
+  //   console.log("Listing ", listing)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -27,8 +29,6 @@ const Search = () => {
     const offerFromUrl = urlParams.get("offer");
     const sortFromUrl = urlParams.get("sort");
     const orderFromUrl = urlParams.get("order");
-
-    
 
     if (
       searchTermFromUrl ||
@@ -50,20 +50,24 @@ const Search = () => {
       });
     }
 
-    const fetchListing = async () =>{
-        setLoading(true)
-        const searchQuery = urlParams.toString()
-        const res = await axios(`/api/property/get?${searchQuery}`)
-        
-        const data = res.data
-        setListing(data)
-        setLoading(false)
-    }
-    fetchListing()
+    const fetchListing = async () => {
+      setLoading(true);
+      setShowMore(false)
+      const searchQuery = urlParams.toString();
+      const res = await axios(`/api/property/get?${searchQuery}`);
+    
+      const data = res.data;
+      if (data.length > 8) {
+        setShowMore(true);
+      }else{
+        setShowMore(false)
+      }
+
+      setListing(data);
+      setLoading(false);
+    };
+    fetchListing();
   }, [location.search]);
-
-
-  //   console.log(sidebardata)
 
   const handleChange = (e) => {
     if (
@@ -71,7 +75,6 @@ const Search = () => {
       e.target.id === "rent" ||
       e.target.id === "sale"
     ) {
-    
       setSidebardata({ ...sidebardata, type: e.target.id });
     }
 
@@ -111,6 +114,21 @@ const Search = () => {
     const searchQuery = urlParams.toString();
     navigate(`/search?${searchQuery}`);
   };
+
+  const onShowMoreClick = async () =>{
+    const numberOfListings = listing.length
+    const startIndex = numberOfListings
+    const urlParams = new URLSearchParams(location.search)
+    urlParams.set('startIndex', startIndex)
+    const searchQuery = urlParams.toString()
+    const res = await axios(`/api/property/get?${searchQuery}`);
+    
+    const data = res.data
+    if(data.length < 9){
+        setShowMore(false)
+    }
+    setListing([...listing, ...data])
+  }
   return (
     <div className="flex flex-col md:flex-row">
       <div className="p-7 border-b-2 md:border-r-2 md:min-h-screen">
@@ -223,15 +241,27 @@ const Search = () => {
           Listing Results:
         </h1>
         <div className="p-7 flex flex-wrap gap-4">
-            {!loading && listing.length === 0 && (
-                <p className="text-xl text-slate-700">No Listing Found</p>
-            )}
-            {loading && (
-                <p className="text-xl text-slate-700 text-center w-full">Loading...</p>
-            )}
-            {!loading && listing && listing.map((listing) =>(
-                <ListingItem key={listing._id} listing={listing}/>
+          {!loading && listing.length === 0 && (
+            <p className="text-xl text-slate-700">No Listing Found</p>
+          )}
+          {loading && (
+            <p className="text-xl text-slate-700 text-center w-full">
+              Loading...
+            </p>
+          )}
+          {!loading &&
+            listing &&
+            listing.map((listing) => (
+              <ListingItem key={listing._id} listing={listing} />
             ))}
+          {showMore && (
+            <button
+              onClick={onShowMoreClick}
+              className="text-green-700 hover:underline p-7 text-center w-full"
+            >
+              Show more
+            </button>
+          )}
         </div>
       </div>
     </div>
