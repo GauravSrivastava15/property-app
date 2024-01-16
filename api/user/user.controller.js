@@ -15,7 +15,7 @@ export const signup = async (req, res, next) => {
   let { password } = req.body;
   password = await bcrypt.hash(password, 12);
   const resp = await userSigninRepo({ ...req.body, password });
-  //   console.log("Response while registering ", resp);
+  
   if (resp.success) {
     res.status(200).json({ msg: "user created", res: resp.res });
   } else {
@@ -41,7 +41,7 @@ export const signin = async (req, res, next) => {
 export const google = async (req, res, next) => {
   try {
     const user = await googleRepo(req.body);
-    // console.log(user);
+    
     if (user) {
       const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET);
       const { password: pass, ...rest } = user._doc;

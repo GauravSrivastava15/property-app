@@ -155,7 +155,7 @@ const Profile = () => {
   const handleListingDelete = async (listingId) => {
     try {
       const res = await axios.delete(`api/property/delete/${listingId}`);
-      console.log("delete res ", res);
+      // console.log("delete res ", res);
       const data = res.data;
       setUserListings((prev) =>
         prev.filter((listing) => listing._id !== listingId)

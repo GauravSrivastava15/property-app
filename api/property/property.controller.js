@@ -32,7 +32,7 @@ export const updateProperty = async (req, res, next) => {
   if (resp.success) {
     res.status(200).json(resp.res);
   } else {
-    console.log(resp.error.statusCode);
+    // console.log(resp.error.statusCode);
     next(new customErrorHandler(resp.error.statusCode, resp.error.msg));
   }
 };

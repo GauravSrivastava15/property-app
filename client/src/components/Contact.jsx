@@ -12,9 +12,9 @@ const Contact = ({ listing }) => {
   useEffect(() => {
     const fetchLandlord = async () => {
       try {
-        console.log(listing.userRef);
+        // console.log(listing.userRef);
         const res = await axios.get(`/api/user/${listing.userRef}`);
-        console.log(res);
+        // console.log(res);
         const data = res.data;
         setLandlord(data);
       } catch (err) {
